@@ -1,0 +1,107 @@
+datasource db { provider = "postgresql"; url = env("DATABASE_URL") }
+generator client { provider = "prisma-client-js" }
+
+model User {
+  id              String   @id @default(cuid())
+  email           String   @unique
+  name            String?
+  image           String?
+  role            Role     @default(USER)
+  stripeAccountId String?
+  verifiedSeller  Boolean  @default(false)
+  shopSlug        String?  @unique
+  shopBio         String?  @db.VarChar(280)
+  shopBanner      String?
+  listings        Listing[]
+  orders          Order[]  @relation("BuyerOrders")
+  rating          Float    @default(0)
+  createdAt       DateTime @default(now())
+}
+
+model Listing {
+  id          String   @id @default(cuid())
+  slug        String   @unique
+  title       String
+  description String
+  priceCents  Int
+  currency    String   @default("EUR")
+  condition   Condition
+  brand       String?  @db.VarChar(80)
+  size        String?  @db.VarChar(20)
+  category    String
+  photos      Photo[]
+  seller      User     @relation(fields: [sellerId], references: [id])
+  sellerId    String
+  status      ListingStatus @default(ACTIVE)
+  createdAt   DateTime @default(now())
+  offers      Offer[]
+  favorites   Favorite[]
+
+  @@index([category])
+  @@index([brand])
+  @@index([size])
+  @@index([condition])
+  @@index([priceCents])
+  @@index([createdAt])
+}
+
+model Photo {
+  id        String  @id @default(cuid())
+  url       String
+  order     Int     @default(0)
+  listing   Listing @relation(fields: [listingId], references: [id])
+  listingId String
+}
+
+model Offer {
+  id          String   @id @default(cuid())
+  listingId   String
+  listing     Listing  @relation(fields: [listingId], references: [id])
+  buyerId     String
+  amountCents Int
+  status      OfferStatus @default(PENDING)
+  createdAt   DateTime @default(now())
+  @@index([listingId, buyerId])
+}
+
+model Favorite {
+  userId    String
+  listingId String
+  user      User    @relation(fields: [userId], references: [id])
+  listing   Listing @relation(fields: [listingId], references: [id])
+  @@id([userId, listingId])
+}
+
+model Order {
+  id           String   @id @default(cuid())
+  buyer        User     @relation("BuyerOrders", fields: [buyerId], references: [id])
+  buyerId      String
+  listing      Listing  @relation(fields: [listingId], references: [id])
+  listingId    String   @unique
+  amountCents  Int
+  feeCents     Int
+  shipCents    Int
+  shipMethod   String   @default("relais")
+  status       OrderStatus @default(PAYMENT_INTENT)
+  paymentPI    String?
+  tracking     String?
+  carrier      String?
+  createdAt    DateTime @default(now())
+}
+
+model Review {
+  id        String   @id @default(cuid())
+  orderId   String   @unique
+  aboutId   String
+  authorId  String
+  rating    Int
+  comment   String?
+  photoUrl  String?
+  createdAt DateTime @default(now())
+}
+
+enum Role { USER MOD ADMIN }
+enum Condition { NEW LIKE_NEW VERY_GOOD GOOD FAIR }
+enum ListingStatus { ACTIVE RESERVED SOLD HIDDEN }
+enum OfferStatus { PENDING ACCEPTED DECLINED EXPIRED }
+enum OrderStatus { PAYMENT_INTENT PAID LABELED SHIPPED DELIVERED RELEASED REFUNDED CANCELED }
