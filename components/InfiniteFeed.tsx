@@ -1,7 +1,6 @@
 "use client";
 import { useEffect, useState } from "react";
 import ProductCard from "./ProductCard";
-
 type Listing = any;
 
 export default function InfiniteFeed({ initial = [] as Listing[] }) {

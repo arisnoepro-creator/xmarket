@@ -2,7 +2,7 @@
 import { useRouter, useSearchParams } from "next/navigation";
 export default function FilterBar() {
   const router = useRouter(); const sp = useSearchParams();
-  const set = (k:string,v:string)=>{const p=new URLSearchParams(sp); v?p.set(k,v):p.delete(k); router.push("/?"+p.toString());};
+  const set = (k:string,v:string)=>{const p=new URLSearchParams(sp as any); v?p.set(k,v):p.delete(k); router.push("/?"+p.toString());};
   return (
     <form className="mb-4 grid grid-cols-2 gap-2 md:grid-cols-6">
       <input defaultValue={sp.get("q")||""} onChange={e=>set("q",e.target.value)}

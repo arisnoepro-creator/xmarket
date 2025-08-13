@@ -1,5 +1,4 @@
 import { prisma } from "@/lib/prisma";
-import ProductCard from "@/components/ProductCard";
 import InfiniteFeed from "@/components/InfiniteFeed";
 import FilterBar from "@/components/FilterBar";
 
