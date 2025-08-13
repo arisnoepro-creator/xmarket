@@ -17,7 +17,6 @@ export async function POST(req: NextRequest) {
   const listing = await prisma.listing.create({
     data: {
       title, description, category, priceCents: Math.round(Number(price)*100),
-      seller: { connect: { email: process.env.SEED_USER_EMAIL || "seller@example.com" } },
       photos: { create: (images||[]).map((url:string, i:number)=>({ url, order:i })) },
       condition: "VERY_GOOD", status: "ACTIVE", currency: "EUR", slug
     }, include: { photos: true }

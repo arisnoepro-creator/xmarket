@@ -1,15 +1,7 @@
-import PusherServer from "pusher";
-import PusherClient from "pusher-js";
-
-let server: any = { trigger: async () => {} };
-if (process.env.PUSHER_APP_ID && process.env.PUSHER_KEY && process.env.PUSHER_SECRET && process.env.PUSHER_CLUSTER) {
-  server = new PusherServer({
-    appId: process.env.PUSHER_APP_ID!,
-    key: process.env.PUSHER_KEY!,
-    secret: process.env.PUSHER_SECRET!,
-    cluster: process.env.PUSHER_CLUSTER!,
-    useTLS: true
-  });
+export const pusherServer = { trigger: async () => {} };
+export class PusherClientMock {
+  constructor(..._args:any[]){}
+  subscribe(_ch:string){ return { bind: (_e:string,_cb:any)=>{}, unsubscribe: (_c:string)=>{} }; }
+  disconnect(){}
 }
-export const pusherServer = server;
-export { PusherClient };
+export { PusherClientMock as PusherClient };

@@ -1,5 +1,4 @@
 import { prisma } from "@/lib/prisma";
-import { Button } from "@/components/ui/Button";
 import Carousel from "@/components/Carousel";
 import BuyNow from "@/components/BuyNow";
 import MakeOffer from "@/components/MakeOffer";
@@ -28,15 +27,11 @@ export default async function ListingPage({ params }: { params: { slug: string }
         <h1 className="mb-1 text-2xl font-bold">{listing.title}</h1>
         <p className="text-muted flex items-center gap-2">
           {listing.category} · {listing.brand ?? "—"} · {listing.condition}
-          <SellerBadge verified={!!listing.seller?.verifiedSeller} />
+          <SellerBadge verified />
         </p>
         <b className="my-3 block text-2xl">{(listing.priceCents/100).toFixed(2)} €</b>
         <div className="space-y-2">
           <BuyNow listingId={listing.id} />
-          <form action="/checkout">
-            <input type="hidden" name="listingId" value={listing.id}/>
-            <Button>Passer par le panier</Button>
-          </form>
           <MakeOffer listingId={listing.id} priceCents={listing.priceCents} />
         </div>
         <p className="mt-4 whitespace-pre-wrap text-sm">{listing.description}</p>

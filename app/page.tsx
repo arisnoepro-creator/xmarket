@@ -1,6 +1,6 @@
-import { prisma } from "@/lib/prisma";
 import InfiniteFeed from "@/components/InfiniteFeed";
 import FilterBar from "@/components/FilterBar";
+import { prisma } from "@/lib/prisma";
 
 export default async function Home({ searchParams }: { searchParams?: Record<string,string> }) {
   const q = searchParams?.q; const brand = searchParams?.brand; const size = searchParams?.size;

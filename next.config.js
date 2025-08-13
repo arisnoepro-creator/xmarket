@@ -1,5 +1,5 @@
 /** @type {import('next').NextConfig} */
 module.exports = {
-  images: { domains: ["res.cloudinary.com", "images.unsplash.com", "picsum.photos"] },
+  images: { domains: ["picsum.photos", "images.unsplash.com", "res.cloudinary.com"] },
   experimental: { serverActions: true }
 };

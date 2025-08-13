@@ -2,7 +2,7 @@ import "./globals.css";
 import { Header } from "@/components/Header";
 import ThemeSwitch from "@/components/ThemeSwitch";
 
-export const metadata = { title: "XMarket", description: "Marketplace C2C" };
+export const metadata = { title: "XMarket (Demo)", description: "Marketplace C2C — Mode Démo" };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
