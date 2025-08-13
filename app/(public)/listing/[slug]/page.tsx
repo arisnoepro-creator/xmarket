@@ -1,5 +1,4 @@
 import { prisma } from "@/lib/prisma";
-import Image from "next/image";
 import { Button } from "@/components/ui/Button";
 import Carousel from "@/components/Carousel";
 import BuyNow from "@/components/BuyNow";
