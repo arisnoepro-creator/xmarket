@@ -16,8 +16,6 @@ model User {
   listings        Listing[]
   orders          Order[]  @relation("BuyerOrders")
   favorites       Favorite[]
-  reviewsAbout    Review[] @relation("AboutReviews")
-  reviewsWritten  Review[] @relation("WrittenReviews")
 
   rating          Float    @default(0)
   createdAt       DateTime @default(now())
@@ -111,9 +109,6 @@ model Review {
   comment   String?
   photoUrl  String?
   createdAt DateTime @default(now())
-
-  about   User @relation("AboutReviews", fields: [aboutId], references: [id])
-  author  User @relation("WrittenReviews", fields: [authorId], references: [id])
 }
 
 model Message {

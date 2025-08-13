@@ -1,30 +1,43 @@
 "use client";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 import ProductCard from "./ProductCard";
 
-export default function InfiniteFeed({ initial }: { initial:any[] }) {
-  const [items,setItems]=useState(initial);
-  const [page,setPage]=useState(1);
-  const [done,setDone]=useState(false);
-  const ref = useRef<HTMLDivElement>(null);
+type Listing = any;
 
-  useEffect(()=> {
-    const io = new IntersectionObserver(async (entries)=>{
-      if (!entries[0].isIntersecting || done) return;
-      const r = await fetch(`/api/listings?page=${page}`); const j = await r.json();
-      if (j.length===0) setDone(true);
-      setItems(prev=>[...prev, ...j]); setPage(p=>p+1);
-    },{ rootMargin:"1000px" });
-    if (ref.current) io.observe(ref.current);
-    return ()=> io.disconnect();
-  }, [page,done]);
+export default function InfiniteFeed({ initial = [] as Listing[] }) {
+  const [items, setItems] = useState<Listing[]>(initial);
+  const [page, setPage] = useState(1);
+  const [loading, setLoading] = useState(false);
+  const [done, setDone] = useState(false);
+
+  async function loadMore() {
+    if (loading || done) return;
+    setLoading(true);
+    const res = await fetch(`/api/listings?page=${page}`);
+    const more = await res.json();
+    if (!more.length) setDone(true);
+    setItems((x) => [...x, ...more]);
+    setPage((p) => p + 1);
+    setLoading(false);
+  }
+
+  useEffect(() => {
+    const onScroll = () => {
+      if (done || loading) return;
+      if (window.innerHeight + window.scrollY >= document.body.offsetHeight - 600) loadMore();
+    };
+    window.addEventListener("scroll", onScroll);
+    return () => window.removeEventListener("scroll", onScroll);
+  }, [loading, done]);
 
   return (
-    <>
-      <section className="grid grid-cols-2 gap-4 md:grid-cols-3 lg:grid-cols-4">
-        {items.map(it => <ProductCard key={it.id} item={it} />)}
-      </section>
-      <div ref={ref} className="py-10 text-center text-muted">{done?"— Fin —":"Chargement…"}</div>
-    </>
+    <div className="grid grid-cols-2 gap-4 md:grid-cols-3 lg:grid-cols-4">
+      {items.map((l: any) => (<ProductCard key={l.id} item={l} />))}
+      {!done && (
+        <button onClick={loadMore} className="col-span-full rounded-xl border py-3 text-sm">
+          {loading ? "Chargement…" : "Charger plus"}
+        </button>
+      )}
+    </div>
   );
 }
