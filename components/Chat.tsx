@@ -7,7 +7,10 @@ export default function Chat({ conversationId }: { conversationId: string }) {
   const inputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
-    const p = new PusherClient(process.env.NEXT_PUBLIC_PUSHER_KEY!, { cluster: process.env.NEXT_PUBLIC_PUSHER_CLUSTER! });
+    const key = process.env.NEXT_PUBLIC_PUSHER_KEY!;
+    const cluster = process.env.NEXT_PUBLIC_PUSHER_CLUSTER!;
+    if (!key || !cluster) return;
+    const p = new PusherClient(key, { cluster });
     const ch = p.subscribe(`chat-${conversationId}`);
     ch.bind("new-message", (m:any)=> setMessages((x)=>[...x, m]));
     return () => { p.unsubscribe(`chat-${conversationId}`); p.disconnect(); };

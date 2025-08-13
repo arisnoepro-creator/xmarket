@@ -10,10 +10,15 @@ model User {
   stripeAccountId String?
   verifiedSeller  Boolean  @default(false)
   shopSlug        String?  @unique
-  shopBio         String?  @db.VarChar(280)
+  shopBio         String?
   shopBanner      String?
+
   listings        Listing[]
   orders          Order[]  @relation("BuyerOrders")
+  favorites       Favorite[]
+  reviewsAbout    Review[] @relation("AboutReviews")
+  reviewsWritten  Review[] @relation("WrittenReviews")
+
   rating          Float    @default(0)
   createdAt       DateTime @default(now())
 }
@@ -26,16 +31,19 @@ model Listing {
   priceCents  Int
   currency    String   @default("EUR")
   condition   Condition
-  brand       String?  @db.VarChar(80)
-  size        String?  @db.VarChar(20)
+  brand       String?
+  size        String?
   category    String
+
   photos      Photo[]
   seller      User     @relation(fields: [sellerId], references: [id])
   sellerId    String
   status      ListingStatus @default(ACTIVE)
   createdAt   DateTime @default(now())
+
   offers      Offer[]
   favorites   Favorite[]
+  order       Order?
 
   @@index([category])
   @@index([brand])
@@ -61,23 +69,28 @@ model Offer {
   amountCents Int
   status      OfferStatus @default(PENDING)
   createdAt   DateTime @default(now())
+
   @@index([listingId, buyerId])
 }
 
 model Favorite {
   userId    String
   listingId String
+
   user      User    @relation(fields: [userId], references: [id])
   listing   Listing @relation(fields: [listingId], references: [id])
+
   @@id([userId, listingId])
 }
 
 model Order {
   id           String   @id @default(cuid())
-  buyer        User     @relation("BuyerOrders", fields: [buyerId], references: [id])
   buyerId      String
-  listing      Listing  @relation(fields: [listingId], references: [id])
+  buyer        User     @relation("BuyerOrders", fields: [buyerId], references: [id])
+
   listingId    String   @unique
+  listing      Listing  @relation(fields: [listingId], references: [id])
+
   amountCents  Int
   feeCents     Int
   shipCents    Int
@@ -98,6 +111,19 @@ model Review {
   comment   String?
   photoUrl  String?
   createdAt DateTime @default(now())
+
+  about   User @relation("AboutReviews", fields: [aboutId], references: [id])
+  author  User @relation("WrittenReviews", fields: [authorId], references: [id])
+}
+
+model Message {
+  id             String   @id @default(cuid())
+  conversationId String
+  authorId       String
+  body           String
+  createdAt      DateTime @default(now())
+
+  @@index([conversationId, createdAt])
 }
 
 enum Role { USER MOD ADMIN }
