@@ -9,13 +9,12 @@
     "prisma:deploy": "prisma migrate deploy"
   },
   "dependencies": {
-    "@auth/prisma-adapter": "latest",
     "@prisma/client": "^5.16.1",
     "@stripe/stripe-js": "^2.4.0",
     "algoliasearch": "^4.23.3",
     "meilisearch": "^0.37.0",
     "next": "14.2.5",
-    "next-auth": "next",
+    "next-auth": "^4.24.7",
     "pusher": "^5.2.3",
     "pusher-js": "^8.4.0",
     "react": "18.3.1",
